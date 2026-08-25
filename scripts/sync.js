@@ -189,7 +189,8 @@ function syncToRemoteRepo(repoConfig, assetMap) {
     console.log(`📝 アセットを合成展開中 ...`);
     writeAssetsToDir(repoDir, assetMap);
 
-    // 3. 差分チェック
+    // 3. 差分チェック (git add を先に行い改行コード等を正規化した上で差分判定)
+    execSync('git add -A', { cwd: repoDir, stdio: 'inherit' });
     const status = execSync('git status --porcelain', { cwd: repoDir, encoding: 'utf8' }).trim();
     if (!status) {
       console.log(`✅ [${repo}] 変更差分はありません。スキップします。`);
@@ -203,7 +204,6 @@ function syncToRemoteRepo(repoConfig, assetMap) {
     const branchName = `chore/sync-agentic-platform-${dateStr}`;
 
     execSync(`git switch -c ${branchName}`, { cwd: repoDir, stdio: 'inherit' });
-    execSync('git add -A', { cwd: repoDir, stdio: 'inherit' });
     execSync('git commit -m "chore: エージェント開発環境の自動同期 (agentic-dev-platform)"', {
       cwd: repoDir,
       stdio: 'inherit',
