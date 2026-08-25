@@ -1,0 +1,62 @@
+name: Sync to Repositories
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "Target repository (e.g., asabon/agentic-sandbox-android). Leave empty to sync all."
+        required: false
+        type: string
+        default: ""
+      dry_run:
+        description: "Run in dry-run mode (do not create PRs)"
+        required: false
+        type: boolean
+        default: false
+  push:
+    branches:
+      - main
+    paths:
+      - "core/**"
+      - "stacks/**"
+      - "config/repositories.json"
+      - "scripts/**"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Configure Git Committer
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run Sync Engine
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          else
+            ARGS="$ARGS --create-pr"
+          fi
+
+          if [ -n "${{ inputs.repo }}" ]; then
+            ARGS="$ARGS --repo ${{ inputs.repo }}"
+          fi
+
+          echo "Running: node scripts/sync.js $ARGS"
+          node scripts/sync.js $ARGS

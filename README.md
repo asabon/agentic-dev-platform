@@ -121,9 +121,9 @@ agentic-dev-platform/ (中央リポジトリ)
   - [x] `agentic-dev-platform` リポジトリの作成
   - [x] 本設計書 (`agentic-dev-platform.md`) を `README.md` / 仕様書として配置
   - [x] `IntervalTimer` から `core/` および `stacks/android/` のアセットを抽出・構造化
-- [ ] **Phase 2: 自動配信ワークフローの実装**
-  - GitHub Actions による配信スクリプトの作成 (GitHub App または PAT を利用)
-  - `IntervalTimer` を最初の対象として配信テスト（PR 作成・マージ動作確認）
+- [x] **Phase 2: 自動配信ワークフローの実装**
+  - [x] GitHub Actions による配信スクリプトの作成 (GitHub App または PAT を利用)
+  - [x] `agentic-sandbox-android` を対象として配信テスト（PR 作成・マージ動作確認）
 - [ ] **Phase 3: マルチスタック拡張**
   - `stacks/typescript/` の定義と専用スキル/ルールの実装
   - `stacks/godot/` の定義と専用スキル/ルールの実装
